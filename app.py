@@ -1,1 +1,1 @@
-print("hej!")
+print("hej Vad ska vi äta i dag?")
