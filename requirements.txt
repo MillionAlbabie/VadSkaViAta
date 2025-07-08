@@ -1,10 +1,41 @@
-fastapi==0.104.1
-uvicorn==0.24.0
-sqlalchemy==2.0.23
-pydantic==2.5.0
-pydantic[email]==2.5.0
-passlib[bcrypt]==1.7.4
-python-jose[cryptography]==3.3.0
-python-multipart==0.0.6
-pymysql==1.1.0
-cryptography==41.0.7
+# Flask Web Framework
+Flask==2.3.3
+Flask-SQLAlchemy==3.0.5
+Flask-Login==0.6.2
+Flask-WTF==1.1.1
+Flask-Migrate==4.0.5
+
+# MySQL Database
+PyMySQL==1.1.0
+cryptography==41.0.4
+
+# Environment Variables
+python-dotenv==1.0.0
+
+# Password Hashing
+Werkzeug==2.3.7
+bcrypt==4.0.1
+
+# Form Validation
+WTForms==3.0.1
+
+# JSON Web Tokens (optional, för API-autentisering)
+PyJWT==2.8.0
+
+# Testing
+pytest==7.4.2
+pytest-flask==1.2.0
+pytest-cov==4.1.0
+
+# Development Tools
+python-decouple==3.8
+
+# Date/Time handling
+python-dateutil==2.8.2
+
+# HTTP Requests (för externa API:er om du vill lägga till recept)
+requests==2.31.0
+
+# Data Processing
+pandas==2.1.1
+numpy==1.24.3

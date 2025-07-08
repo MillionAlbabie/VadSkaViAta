@@ -1,0 +1,146 @@
+# VadSkaViAta - Projektstruktur
+
+## Mappstruktur
+```
+VadSkaViAta/
+├── app/
+│   ├── __init__.py
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── user.py
+│   │   ├── food.py
+│   │   └── favorite.py
+│   ├── routes/
+│   │   ├── __init__.py
+│   │   ├── auth.py
+│   │   ├── foods.py
+│   │   └── suggestions.py
+│   ├── services/
+│   │   ├── __init__.py
+│   │   ├── food_service.py
+│   │   └── suggestion_service.py
+│   ├── static/
+│   │   ├── css/
+│   │   │   └── style.css
+│   │   └── js/
+│   │       └── main.js
+│   └── templates/
+│       ├── base.html
+│       ├── index.html
+│       ├── login.html
+│       ├── favorites.html
+│       └── suggestions.html
+├── database/
+│   ├── init.sql
+│   └── seed_data.sql
+├── config/
+│   ├── __init__.py
+│   ├── config.py
+│   └── database.py
+├── tests/
+│   ├── __init__.py
+│   ├── test_models.py
+│   ├── test_routes.py
+│   └── test_services.py
+├── requirements.txt
+├── run.py
+├── .env.example
+├── .gitignore
+└── README.md
+```
+
+## Databasschema (MySQL)
+
+### Tabeller:
+1. **users** - Användarinformation
+2. **foods** - Alla maträtter i systemet
+3. **user_favorites** - Användarens favoritmat
+4. **suggestions** - Genererade förslag (optional, för cachning)
+
+### SQL Schema:
+```sql
+-- users tabell
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- foods tabell
+CREATE TABLE foods (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    cuisine_type VARCHAR(50),
+    difficulty_level ENUM('easy', 'medium', 'hard'),
+    cooking_time INT, -- minuter
+    ingredients TEXT,
+    instructions TEXT,
+    image_url VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- user_favorites tabell
+CREATE TABLE user_favorites (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    food_id INT NOT NULL,
+    rating INT CHECK (rating >= 1 AND rating <= 5),
+    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (food_id) REFERENCES foods(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_user_food (user_id, food_id)
+);
+
+-- suggestions tabell (för cachning av förslag)
+CREATE TABLE suggestions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    food_id INT NOT NULL,
+    suggestion_type VARCHAR(50), -- 'daily', 'weekly', etc.
+    score FLOAT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (food_id) REFERENCES foods(id) ON DELETE CASCADE
+);
+```
+
+## Kärnfunktioner
+
+### Backend (Python/Flask):
+1. **Användarhantering**
+   - Registrering och inloggning
+   - Sessionshantering
+
+2. **Favorithantering**
+   - Lägg till/ta bort favoriter
+   - Betygsätt maträtter
+   - Visa favoritlista
+
+3. **Förstlagsmotor**
+   - Baserat på användarens favoriter
+   - Viktning efter betyg
+   - Variation för att undvika upprepning
+
+4. **API-endpoints**
+   - REST API för frontend
+   - JSON-responses
+
+### Frontend:
+1. **Responsiv webbdesign**
+2. **Interaktiv favorithantering**
+3. **Förslagsvy med filtermöjligheter**
+4. **Enkel och intuitiv UX**
+
+## Teknisk stack
+- **Backend**: Python 3.11 med Flask-ramverk
+- **Databas**: MySQL 8.0+
+- **ORM**: SQLAlchemy för Python-MySQL integration
+- **Databasdriver**: PyMySQL eller mysql-connector-python
+- **Frontend**: HTML, CSS, JavaScript
+- **Autentisering**: Flask-Login
+- **Miljövariabler**: python-dotenv
+- **Testning**: pytest
+
